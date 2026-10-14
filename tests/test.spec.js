@@ -33,7 +33,7 @@ async function authenticate(page) {
     await passwordField.fill(process.env.PASS, { timeout: 10000 });
     
     // Login butonunu submit et
-    await page.locator('button[type="submit"]').click({ timeout: 10000 });
+    await page.locator('button.xoo-el-login-btn').click({ timeout: 10000 });
     
     // Yönlendirme/sayfa değişimi bekle
     await page.waitForLoadState('networkidle', { timeout: 20000 });
