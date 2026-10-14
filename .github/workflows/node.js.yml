@@ -30,7 +30,7 @@ jobs:
     - run: chmod +x node_modules/.bin/*
     - run: npx playwright install --with-deps
     - name: Remove macOS metadata files
-    - run: |
+     run: |
           rm -rf __MACOSX
           find . -name "._*" -not -path "./node_modules/*" -delete
           find . -name ".DS_Store" -not -path "./node_modules/*" -delete
