@@ -39,13 +39,24 @@ async function authenticate(page) {
     await page.waitForLoadState('networkidle', { timeout: 20000 });
     
     // Başarı kontrol et
-    const text = await page.locator('#menu-item-1314 > a').textContent();
-    if (text && text.includes('Hello')) {
-      console.log("✓ Kimlik doğrulama başarılı!");
+        // Başarı kontrol et
+    await page.waitForTimeout(3000);
+
+    // Hata mesajı var mı?
+    const errorMsg = await page.locator('.xoo-el-notice, .xoo-el-form-container .xoo-el-notice').allTextContents();
+    console.log("Form mesajları:", errorMsg);
+
+    // Menüde "Hello" içeren link var mı?
+    const helloLink = page.locator('a', { hasText: /Hello/i }).first();
+    const loggedIn = await helloLink.isVisible({ timeout: 10000 }).catch(() => false);
+
+    if (loggedIn) {
+      console.log("✓ Kimlik doğrulama başarılı:", await helloLink.textContent());
     } else {
-      console.warn("⚠ Login metni beklenen formatta değil:", text);
+      console.warn("⚠ 'Hello' bulunamadı. URL:", page.url());
+      await page.screenshot({ path: 'after-login.png', fullPage: true });
+      throw new Error("Giriş başarısız görünüyor");
     }
-    
     // Screenshot al
     await page.screenshot({ path: 'screenshot.png' });
     screenshotTaken = true;
