@@ -1,1 +1,35 @@
+name: Node.js CI
 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 20.x, 22.x, 24.x ]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Remove macOS metadata files
+      run: |
+        rm -rf __MACOSX
+        find . -name "._*" -not -path "./node_modules/*" -delete
+        find . -name ".DS_Store" -not -path "./node_modules/*" -delete
+
+    - run: npm install
+    - run: chmod +x node_modules/.bin/*
+    - run: npx playwright install --with-deps
+    - run: npx playwright test
