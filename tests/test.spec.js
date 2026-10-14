@@ -15,6 +15,7 @@ async function authenticate(page) {
     
     // Login linkini bul ve tıkla
     await page.getByText('Login', { exact: true }).click({ timeout: 10000 });
+    //await page.getByText('Login', { exact: true }).click({ timeout: 10000 });
     
     // Login modal/formunun açılmasını bekle
     await page.waitForSelector("[name='xoo-el-username']", { timeout: 20000 });
