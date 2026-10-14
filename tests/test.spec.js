@@ -33,6 +33,26 @@ async function authenticate(page) {
     await passwordField.fill(process.env.PASS, { timeout: 10000 });
     
     // Login butonunu submit et
+        // AJAX cevabını logla
+    page.on('console', msg => {
+      if (msg.type() === 'error') console.log('Tarayıcı konsol hatası:', msg.text());
+    });
+
+    const ajaxPromise = page.waitForResponse(
+      r => r.url().includes('admin-ajax.php') && r.request().method() === 'POST',
+      { timeout: 15000 }
+    ).catch(() => null);
+
+    await page.getByRole('button', { name: 'Sign in' }).click({ timeout: 10000 });
+
+    const ajaxRes = await ajaxPromise;
+    if (ajaxRes) {
+      console.log('AJAX status:', ajaxRes.status());
+      console.log('AJAX content-type:', ajaxRes.headers()['content-type']);
+      console.log('AJAX body:', (await ajaxRes.text()).slice(0, 500));
+    } else {
+      console.log('admin-ajax.php isteği hiç görülmedi');
+    }
     await page.locator('button.xoo-el-login-btn').click({ timeout: 10000 });
     
     // Yönlendirme/sayfa değişimi bekle
